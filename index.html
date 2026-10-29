@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ek4ns | Cyber Security Researcher & Analyst</title>
+    
+    <!-- Distinct High-Tech Google Fonts: Orbitron (Futuristic Display), Syne (Bold Cyber Titles), Plus Jakarta Sans (Sleek UI), Fira Code (Hacker Monospace) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cyber: ['"Orbitron"', 'sans-serif'],
+                        title: ['"Syne"', 'sans-serif'],
+                        mono: ['"Fira Code"', 'monospace'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    },
+                    colors: {
+                        cyber: {
+                            obsidian: '#03050c',
+                            space: '#080d1a',
+                            card: '#0c1326',
+                            cardHover: '#131e3d',
+                            border: '#1c2b52',
+                            borderBright: '#2d437e',
+                            violet: '#8b5cf6',
+                            hyperCyan: '#06b6d4',
+                            amber: '#f59e0b',
+                            emerald: '#10b981',
+                            muted: '#718096'
+                        }
+                    },
+                    animation: {
+                        'radar-sweep': 'radarSweep 6s linear infinite',
+                        'float': 'float 4s ease-in-out infinite alternate',
+                        'ping-slow': 'ping 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'shimmer': 'shimmer 2.5s infinite linear',
+                    },
+                    keyframes: {
+                        radarSweep: {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg)' }
+                        },
+                        float: {
+                            '0%': { transform: 'translateY(0px)' },
+                            '100%': { transform: 'translateY(-10px)' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Custom Futuristic Scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #03050c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1c2b52;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6;
+        }
+
+        /* Ambient Cyber Grid Floor */
+        .cyber-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(139, 92, 246, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+        }
+
+        /* Glassmorphism Card Style */
+        .cyber-glass {
+            background: rgba(12, 19, 38, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        /* Glow effects */
+        .glow-violet {
+            text-shadow: 0 0 16px rgba(139, 92, 246, 0.7);
+        }
+        .glow-cyan {
+            text-shadow: 0 0 16px rgba(6, 182, 212, 0.7);
+        }
+
+        /* Canvas background positioning */
+        #radar-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;
+            z-index: 0;
+        }
+    </style>
+</head>
+
+<body class="bg-cyber-obsidian text-slate-200 font-sans selection:bg-cyber-violet selection:text-white relative min-h-screen overflow-x-hidden cyber-grid">
+
+    <!-- Interactive Cyber Radar & Threat Hex Canvas Background -->
+    <canvas id="radar-canvas"></canvas>
+
+    <!-- Ambient Vignette Overlay -->
+    <div class="fixed inset-0 pointer-events-none z-10 bg-[radial-gradient(ellipse_at_top,transparent_30%,#03050c_90%)]"></div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-cyber-obsidian/80 border-b border-cyber-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="relative w-3.5 h-3.5 flex items-center justify-center">
+                    <span class="absolute w-full h-full rounded-full bg-cyber-violet animate-ping opacity-75"></span>
+                    <span class="w-2 h-2 rounded-full bg-cyber-hyperCyan"></span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-display font-extrabold tracking-wider text-lg text-white group-hover:text-cyber-violet transition flex items-center gap-1">
+                        EK4NS <span class="text-xs font-mono font-normal px-1.5 py-0.5 rounded bg-cyber-violet/20 text-cyber-violet border border-cyber-violet/40">NODE.01</span>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 font-mono text-xs tracking-wider">
+                <a href="#about" class="text-slate-400 hover:text-cyber-hyperCyan transition flex items-center gap-1.5">
+                    <span class="text-cyber-violet font-semibold">//01</span> About
+                </a>
+                <a href="#course" class="text-slate-400 hover:text-cyber-hyperCyan transition flex items-center gap-1.5">
+                    <span class="text-cyber-violet font-semibold">//02</span> Course Track
+                </a>
+                <a href="#labs" class="text-slate-400 hover:text-cyber-hyperCyan transition flex items-center gap-1.5">
+                    <span class="text-cyber-violet font-semibold">//03</span> TryHackMe Lab
+                </a>
+                <a href="#terminal" class="text-slate-400 hover:text-cyber-hyperCyan transition flex items-center gap-1.5">
+                    <span class="text-cyber-violet font-semibold">//04</span> CLI Terminal
+                </a>
+                <a href="#contact" class="text-slate-400 hover:text-cyber-hyperCyan transition flex items-center gap-1.5">
+                    <span class="text-cyber-violet font-semibold">//05</span> Dispatch
+                </a>
+            </nav>
+
+            <!-- Action Badges / GitHub SVG Logo -->
+            <div class="flex items-center gap-3">
+                <a href="https://github.com/erenyager-ai" target="_blank" rel="noopener noreferrer" 
+                   title="GitHub Profile"
+                   class="p-2.5 rounded-xl bg-cyber-card border border-cyber-border text-slate-300 hover:text-white hover:border-cyber-violet hover:shadow-[0_0_15px_rgba(139,92,246,0.35)] transition flex items-center justify-center">
+                    <!-- Official GitHub SVG Mark -->
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                    </svg>
+                </a>
+                <a href="https://instagram.com/vxn_ek4ns__" target="_blank" rel="noopener noreferrer" 
+                   title="Instagram Profile"
+                   class="p-2.5 rounded-xl bg-cyber-card border border-cyber-border text-slate-300 hover:text-pink-400 hover:border-pink-500/50 hover:shadow-[0_0_15px_rgba(236,72,153,0.35)] transition flex items-center justify-center">
+                    <!-- Instagram SVG Icon -->
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                </a>
+                <a href="#contact" class="font-mono text-xs px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyber-violet to-cyber-hyperCyan text-white font-bold hover:shadow-[0_0_16px_rgba(139,92,246,0.5)] transition">
+                    SIGNAL EK4NS
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-24">
+
+        <!-- HERO SECTION -->
+        <section class="min-h-[75vh] flex flex-col justify-center items-start pt-4">
+            <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyber-card border border-cyber-violet/50 text-cyber-violet text-xs font-mono mb-6 shadow-[0_0_12px_rgba(139,92,246,0.2)]">
+                <span class="w-2 h-2 rounded-full bg-cyber-hyperCyan animate-pulse"></span>
+                <span>CYBER SECURITY TRAINEE // HANDS-ON LABS IN PROGRESS</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl lg:text-8xl font-title font-extrabold tracking-tight text-white mb-4">
+                I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-cyber-hyperCyan to-emerald-400 glow-violet font-cyber tracking-wider">Ek4ns</span>.
+            </h1>
+
+            <p class="text-xl sm:text-2xl text-slate-200 font-sans font-medium max-w-3xl mb-4 leading-relaxed tracking-tight">
+                Cyber Security Practitioner & Lab Analyst based in 
+                <span class="text-white font-bold font-cyber tracking-wide">Ghaziabad, India</span>.
+            </p>
+
+            <p class="text-sm sm:text-base text-slate-400 max-w-2xl font-sans mb-8 leading-relaxed font-normal">
+                Focused on hands-on defensive testing, Linux internals, network protocol analysis, and offensive privilege auditing. Practicing real adversarial environments on TryHackMe with handle <strong class="text-cyber-hyperCyan font-mono">Ek4ns.26</strong>.
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="#labs" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyber-violet to-indigo-600 text-white font-mono font-bold text-xs tracking-wider hover:shadow-[0_0_20px_rgba(139,92,246,0.6)] transition flex items-center gap-2">
+                    <i data-lucide="shield" class="w-4 h-4"></i>
+                    EXPLORE LAB AUDITS
+                </a>
+
+                <a href="https://github.com/erenyager-ai" target="_blank" rel="noopener noreferrer"
+                   class="px-5 py-3.5 rounded-xl cyber-glass border border-cyber-border text-slate-200 font-mono text-xs tracking-wider hover:border-cyber-hyperCyan hover:text-cyber-hyperCyan transition flex items-center gap-2">
+                    <!-- Official GitHub SVG Mark -->
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                    </svg>
+                    GITHUB PROJECTS
+                </a>
+
+                <a href="#terminal" class="px-5 py-3.5 rounded-xl cyber-glass border border-cyber-border text-slate-300 font-mono text-xs tracking-wider hover:border-cyber-violet hover:text-cyber-violet transition flex items-center gap-2">
+                    <i data-lucide="terminal" class="w-4 h-4"></i>
+                    OPEN CLI
+                </a>
+            </div>
+
+            <!-- Quick Telemetry Dashboard Bar -->
+            <div class="mt-12 w-full grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl cyber-glass border border-cyber-border/70">
+                <div>
+                    <span class="block text-[11px] font-mono text-cyber-muted tracking-wider">CALLSIGN</span>
+                    <span class="font-mono text-sm text-cyber-hyperCyan font-bold">Ek4ns.26</span>
+                </div>
+                <div>
+                    <span class="block text-[11px] font-mono text-cyber-muted tracking-wider">EDUCATION</span>
+                    <span class="font-mono text-sm text-slate-200">10th Cleared (High School)</span>
+                </div>
+                <div>
+                    <span class="block text-[11px] font-mono text-cyber-muted tracking-wider">SYSTEM FOCUS</span>
+                    <span class="font-mono text-sm text-cyber-violet font-semibold">Linux & Full Course</span>
+                </div>
+                <div>
+                    <span class="block text-[11px] font-mono text-cyber-muted tracking-wider">COORDINATES</span>
+                    <span class="font-mono text-sm text-slate-300">Ghaziabad, India</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 01: ABOUT & OPERATOR DOSSIER -->
+        <section id="about" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <span class="font-mono text-cyber-violet font-bold text-lg">//01.</span>
+                <h2 class="text-2xl sm:text-3xl font-display font-bold text-white tracking-wide">OPERATOR DOSSIER</h2>
+                <div class="h-px bg-cyber-border flex-1 ml-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Bio card -->
+                <div class="lg:col-span-2 p-6 sm:p-8 rounded-2xl cyber-glass border border-cyber-border space-y-5">
+                    <h3 class="text-lg font-display font-bold text-white flex items-center gap-2">
+                        <i data-lucide="crosshair" class="w-5 h-5 text-cyber-hyperCyan"></i>
+                        Background & Philosophy
+                    </h3>
+                    <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+                        I am <span class="text-white font-semibold">Ek4ns</span>, an early-career Cyber Security practitioner based in Ghaziabad, UP. Having cleared 10th standard, I dedicate my focus to practical fundamentals—understanding how networking protocols operate, how operating system kernels enforce security boundaries, and where configurations fail.
+                    </p>
+                    <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+                        My practice revolves around active lab execution. Instead of passive watching, I build mental models by setting up vulnerable environments, auditing SUID permissions, tracing packet lifecycles, and scripting automation tasks in Python, C++, and Bash.
+                    </p>
+
+                    <!-- Core Pillars -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        <div class="p-4 rounded-xl bg-cyber-space/80 border border-cyber-border flex items-start gap-3">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-mono text-slate-200 font-bold uppercase">Ethical Boundary</h4>
+                                <p class="text-xs text-cyber-muted mt-1">Dedicated to authorized lab exploration, defensibility, and proactive hardening.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-cyber-space/80 border border-cyber-border flex items-start gap-3">
+                            <i data-lucide="cpu" class="w-5 h-5 text-cyber-violet shrink-0 mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-mono text-slate-200 font-bold uppercase">Systems First</h4>
+                                <p class="text-xs text-cyber-muted mt-1">Deep emphasis on Linux CLI command lines, socket networking, and memory primitives.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info sidebar card -->
+                <div class="p-6 rounded-2xl cyber-glass border border-cyber-border flex flex-col justify-between space-y-6">
+                    <div>
+                        <div class="flex items-center justify-between pb-3 border-b border-cyber-border">
+                            <span class="font-mono text-xs text-cyber-muted">NODE STATUS</span>
+                            <span class="font-mono text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> ONLINE / ACTIVE
+                            </span>
+                        </div>
+
+                        <div class="space-y-4 mt-5 font-mono text-xs">
+                            <div>
+                                <span class="text-cyber-muted block">PRIMARY IDENTITY:</span>
+                                <span class="text-white font-semibold">Ek4ns</span>
+                            </div>
+                            <div>
+                                <span class="text-cyber-muted block">TRYHACKME ID:</span>
+                                <span class="text-cyber-hyperCyan font-semibold">Ek4ns.26</span>
+                            </div>
+                            <div>
+                                <span class="text-cyber-muted block">BASE COORDINATES:</span>
+                                <span class="text-slate-200">Ghaziabad, UP, India</span>
+                            </div>
+                            <div>
+                                <span class="text-cyber-muted block">TRANSMISSION EMAIL:</span>
+                                <span class="text-slate-300 select-all">ek4ns26@gmail.com</span>
+                            </div>
+                            <div>
+                                <span class="text-cyber-muted block">CODE REPOSITORY:</span>
+                                <a href="https://github.com/erenyager-ai" target="_blank" class="text-cyber-violet hover:underline flex items-center gap-1.5 mt-1 font-semibold">
+                                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                                    erenyager-ai
+                                </a>
+                            </div>
+                            <div>
+                                <span class="text-cyber-muted block">INSTAGRAM SIGNAL:</span>
+                                <a href="https://instagram.com/vxn_ek4ns__" target="_blank" class="text-pink-400 hover:underline flex items-center gap-1.5 mt-1 font-semibold">
+                                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                                    @vxn_ek4ns__
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="copyEmailToClipboard()" class="w-full py-2.5 px-3 rounded-xl bg-cyber-violet/10 border border-cyber-violet/40 text-cyber-violet hover:bg-cyber-violet hover:text-white font-mono text-xs font-bold transition flex items-center justify-center gap-2">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        COPY EMAIL TO CLIPBOARD
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 02: CYBER SECURITY FULL COURSE TRACK -->
+        <section id="course" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <span class="font-mono text-cyber-violet font-bold text-lg">//02.</span>
+                <h2 class="text-2xl sm:text-3xl font-display font-bold text-white tracking-wide">LEARNING TRACK & SYLLABUS</h2>
+                <div class="h-px bg-cyber-border flex-1 ml-4"></div>
+            </div>
+
+            <p class="text-slate-400 text-sm max-w-3xl">
+                Modular roadmap covering network layers, systems engineering, scripting languages, web testing, and defensive security:
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Module 1: Networking & Protocols -->
+                <div class="p-6 rounded-2xl cyber-glass border border-cyber-border hover:border-cyan-500/60 transition group space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-semibold">MODULE 01</span>
+                        <i data-lucide="network" class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition"></i>
+                    </div>
+                    <h3 class="text-lg font-display font-bold text-white group-hover:text-cyan-300 transition">Networking & Protocols</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Packet transmission mechanisms, protocol analysis, and traffic inspection.
+                    </p>
+                    <ul class="font-mono text-xs text-slate-400 space-y-2 pt-2 border-t border-cyber-border">
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">▸</span> OSI 7-Layer & TCP/IP Architecture</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">▸</span> Subnetting, CIDR & Routing</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">▸</span> DNS, DHCP, ARP, HTTP/HTTPS</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">▸</span> Wireshark Packet Inspection</li>
+                    </ul>
+                </div>
+
+                <!-- Module 2: Linux & CLI Mastery (Highlighted) -->
+                <div class="p-6 rounded-2xl bg-cyber-card border-2 border-cyber-violet shadow-[0_0_24px_rgba(139,92,246,0.2)] transition group space-y-4 relative">
+                    <div class="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-cyber-violet text-white font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                        LAB VERIFIED
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-cyber-violet/20 text-cyber-violet border border-cyber-violet/40 font-semibold">MODULE 02</span>
+                        <i data-lucide="terminal" class="w-5 h-5 text-cyber-violet group-hover:scale-110 transition"></i>
+                    </div>
+                    <h3 class="text-lg font-display font-bold text-white group-hover:text-cyber-violet transition">Linux Architecture & Hardening</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Command line proficiency, file permissions, daemon inspection, and privilege auditing.
+                    </p>
+                    <ul class="font-mono text-xs text-slate-300 space-y-2 pt-2 border-t border-cyber-border">
+                        <li class="flex items-center gap-2"><span class="text-cyber-violet">✔</span> Permissions (chmod, chown, sticky bits)</li>
+                        <li class="flex items-center gap-2"><span class="text-cyber-violet">✔</span> SUID / SGID Binary Detection</li>
+                        <li class="flex items-center gap-2"><span class="text-cyber-violet">✔</span> Sudo privilege elevation & GTFOBins</li>
+                        <li class="flex items-center gap-2"><span class="text-cyber-violet">✔</span> TryHackMe: Linux Agency Cleared</li>
+                    </ul>
+                </div>
+
+                <!-- Module 3: Web App Security & OWASP -->
+                <div class="p-6 rounded-2xl cyber-glass border border-cyber-border hover:border-amber-500/60 transition group space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30 font-semibold">MODULE 03</span>
+                        <i data-lucide="globe" class="w-5 h-5 text-amber-400 group-hover:scale-110 transition"></i>
+                    </div>
+                    <h3 class="text-lg font-display font-bold text-white group-hover:text-amber-300 transition">Web Application Security</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Identifying vulnerabilities based on OWASP Top 10 standards using proxy interceptors.
+                    </p>
+                    <ul class="font-mono text-xs text-slate-400 space-y-2 pt-2 border-t border-cyber-border">
+                        <li class="flex items-center gap-2"><span class="text-amber-400">▸</span> SQL Injection (SQLi) vectors</li>
+                        <li class="flex items-center gap-2"><span class="text-amber-400">▸</span> Stored & Reflected XSS</li>
+                        <li class="flex items-center gap-2"><span class="text-amber-400">▸</span> Broken Access & IDOR</li>
+                        <li class="flex items-center gap-2"><span class="text-amber-400">▸</span> Burp Suite HTTP Repeater/Intruder</li>
+                    </ul>
+                </div>
+
+                <!-- Module 4: Coding Languages (Updated) -->
+                <div class="p-6 rounded-2xl cyber-glass border border-cyber-border hover:border-emerald-500/60 transition group space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">MODULE 04</span>
+                        <i data-lucide="code-2" class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition"></i>
+                    </div>
+                    <h3 class="text-lg font-display font-bold text-white group-hover:text-emerald-300 transition">Security Scripting & Languages</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Tool automation, source code auditing, memory manipulation, and application flow logic.
+                    </p>
+                    <ul class="font-mono text-xs text-slate-400 space-y-2 pt-2 border-t border-cyber-border">
+                        <li class="flex items-center gap-2"><span class="text-emerald-400">▸</span> <strong>Python:</strong> Automation, port scanners, sockets</li>
+                        <li class="flex items-center gap-2"><span class="text-emerald-400">▸</span> <strong>C++:</strong> Memory safety, pointer arithmetic, buffer logic</li>
+                        <li class="flex items-center gap-2"><span class="text-emerald-400">▸</span> <strong>JavaScript:</strong> DOM execution, client-side XSS</li>
+                        <li class="flex items-center gap-2"><span class="text-emerald-400">▸</span> <strong>Java:</strong> OOP structure, backend API endpoints</li>
+                    </ul>
+                </div>
+
+                <!-- Module 5: SOC & Defensive Monitoring -->
+                <div class="p-6 rounded-2xl cyber-glass border border-cyber-border hover:border-blue-500/60 transition group space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/30 font-semibold">MODULE 05</span>
+                        <i data-lucide="shield-alert" class="w-5 h-5 text-blue-400 group-hover:scale-110 transition"></i>
+                    </div>
+                    <h3 class="text-lg font-display font-bold text-white group-hover:text-blue-300 transition">SOC & Defensive Operations</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Investigating telemetry signals, log correlation, and threat detection triage.
+                    </p>
+                    <ul class="font-mono text-xs text-slate-400 space-y-2 pt-2 border-t border-cyber-border">
+                        <li class="flex items-center gap-2"><span class="text-blue-400">▸</span> Windows Event Logs & Sysmon</li>
+                        <li class="flex items-center gap-2"><span class="text-blue-400">▸</span> SIEM Queries & Telemetry Pipelines</li>
+                        <li class="flex items-center gap-2"><span class="text-blue-400">▸</span> Incident Response Lifecycle</li>
+                        <li class="flex items-center gap-2"><span class="text-blue-400">▸</span> Threat Intelligence correlation</li>
+                    </ul>
+                </div>
+
+                <!-- Module 6: Cryptography & Security Controls -->
+                <div class="p-6 rounded-2xl cyber-glass border border-cyber-border hover:border-purple-500/60 transition group space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/30 font-semibold">MODULE 06</span>
+                        <i data-lucide="key" class="w-5 h-5 text-purple-400 group-hover:scale-110 transition"></i>
+                    </div>
+                    <h3 class="text-lg font-display font-bold text-white group-hover:text-purple-300 transition">Cryptography & Hardening</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Ciphers, hashing standards, public key infrastructure, and defensive controls.
+                    </p>
+                    <ul class="font-mono text-xs text-slate-400 space-y-2 pt-2 border-t border-cyber-border">
+                        <li class="flex items-center gap-2"><span class="text-purple-400">▸</span> AES & RSA Cryptographic Ciphers</li>
+                        <li class="flex items-center gap-2"><span class="text-purple-400">▸</span> SHA-256 Hashing & Salting</li>
+                        <li class="flex items-center gap-2"><span class="text-purple-400">▸</span> SSL/TLS Handshake Inspection</li>
+                        <li class="flex items-center gap-2"><span class="text-purple-400">▸</span> Identity & Access Management (IAM)</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 03: PRACTICAL LABS & CASE STUDIES -->
+        <section id="labs" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <span class="font-mono text-cyber-violet font-bold text-lg">//03.</span>
+                <h2 class="text-2xl sm:text-3xl font-display font-bold text-white tracking-wide">PRACTICAL LAB CASE STUDY</h2>
+                <div class="h-px bg-cyber-border flex-1 ml-4"></div>
+            </div>
+
+            <!-- Featured Case Study Card: TryHackMe Linux Agency -->
+            <div class="p-6 sm:p-8 rounded-3xl cyber-glass border border-cyber-border hover:border-cyber-violet/60 transition shadow-xl space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3.5 rounded-2xl bg-cyber-violet/10 border border-cyber-violet/30 text-cyber-violet">
+                            <i data-lucide="terminal" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <span class="font-mono text-xs text-cyber-violet font-bold uppercase tracking-wider">TryHackMe Verified Lab Audit</span>
+                            <h3 class="text-xl sm:text-2xl font-display font-bold text-white">Linux Agency: Privilege Escalation & Audit</h3>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono text-xs px-3 py-1.5 rounded-full bg-cyber-space border border-cyber-border text-slate-300">
+                            Operator: <strong class="text-cyber-hyperCyan font-bold">Ek4ns.26</strong>
+                        </span>
+                        <a href="https://github.com/erenyager-ai" target="_blank" rel="noopener noreferrer"
+                           title="GitHub Repository"
+                           class="p-2.5 rounded-xl bg-cyber-space border border-cyber-border text-slate-300 hover:text-white hover:border-cyber-violet transition">
+                            <!-- Official GitHub SVG Mark -->
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="p-4 rounded-xl bg-cyber-space/90 border border-cyber-border space-y-2">
+                        <span class="font-mono text-xs text-cyber-hyperCyan font-bold flex items-center gap-1.5">
+                            <i data-lucide="target" class="w-4 h-4"></i> OBJECTIVE
+                        </span>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Systematically inspect a Linux target server, audit misconfigured permissions, inspect background processes, and escalate privileges ethically.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-cyber-space/90 border border-cyber-border space-y-2">
+                        <span class="font-mono text-xs text-cyber-violet font-bold flex items-center gap-1.5">
+                            <i data-lucide="wrench" class="w-4 h-4"></i> TOOLS & TECHNIQUES
+                        </span>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Bash CLI, SSH, SUID/SGID auditing, GTFOBins references, <code class="text-cyber-hyperCyan">sudo -l</code> permission tests, and log examination.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-cyber-space/90 border border-cyber-border space-y-2">
+                        <span class="font-mono text-xs text-emerald-400 font-bold flex items-center gap-1.5">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i> KEY TAKEAWAYS
+                        </span>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Identified risks of overly permissive binaries. Applied remediation strategies by stripping unnecessary SUID bits with chmod.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Code / Command Preview inside Card -->
+                <div class="rounded-xl bg-black/70 border border-cyber-border p-4 font-mono text-xs overflow-x-auto text-slate-300">
+                    <div class="flex items-center justify-between pb-2 mb-3 border-b border-cyber-border/60 text-cyber-muted">
+                        <span>bash ~ inspection execution</span>
+                        <span class="text-emerald-400 font-bold">EXECUTION SUCCESSFUL</span>
+                    </div>
+                    <p class="text-cyber-muted"># Finding binaries with SUID permission bit set</p>
+                    <p class="text-slate-100"><span class="text-cyber-hyperCyan">ek4ns@target:~$</span> find / -perm -u=s -type f 2>/dev/null</p>
+                    <p class="text-cyber-muted mt-2"># Verifying current user's privileged commands</p>
+                    <p class="text-slate-100"><span class="text-cyber-hyperCyan">ek4ns@target:~$</span> sudo -l</p>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[11px] font-mono px-3 py-1 rounded-lg bg-cyber-space border border-cyber-border text-cyber-hyperCyan">Linux CLI</span>
+                        <span class="text-[11px] font-mono px-3 py-1 rounded-lg bg-cyber-space border border-cyber-border text-cyber-violet">Privilege Escalation</span>
+                        <span class="text-[11px] font-mono px-3 py-1 rounded-lg bg-cyber-space border border-cyber-border text-slate-300">TryHackMe</span>
+                        <span class="text-[11px] font-mono px-3 py-1 rounded-lg bg-cyber-space border border-cyber-border text-emerald-400">SUID / SGID Audit</span>
+                    </div>
+
+                    <button onclick="openLabModal()" class="px-5 py-2.5 rounded-xl bg-cyber-violet/20 border border-cyber-violet/50 text-cyber-violet hover:bg-cyber-violet hover:text-white font-mono text-xs font-bold transition flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        VIEW FULL WRITE-UP NOTES
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 04: INTERACTIVE CLI TERMINAL -->
+        <section id="terminal" class="space-y-6">
+            <div class="flex items-center gap-3">
+                <span class="font-mono text-cyber-violet font-bold text-lg">//04.</span>
+                <h2 class="text-2xl sm:text-3xl font-display font-bold text-white tracking-wide">INTERACTIVE SECURITY CLI</h2>
+                <div class="h-px bg-cyber-border flex-1 ml-4"></div>
+            </div>
+
+            <p class="text-slate-400 text-sm">
+                Execute live commands in Ek4ns's simulated terminal. Type <span class="font-mono text-cyber-hyperCyan font-semibold">help</span> to list commands.
+            </p>
+
+            <!-- Terminal Window -->
+            <div class="rounded-2xl bg-[#020409] border border-cyber-border shadow-2xl overflow-hidden font-mono text-xs sm:text-sm">
+                <!-- Title Bar -->
+                <div class="bg-cyber-space px-4 py-3 border-b border-cyber-border flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                        <span class="ml-2 text-xs text-cyber-muted">ek4ns@workstation:~ (zsh)</span>
+                    </div>
+                    <span class="text-[10px] text-cyber-violet uppercase font-bold tracking-widest hidden sm:inline">RADAR LINK: SYNCED</span>
+                </div>
+
+                <!-- Output Display -->
+                <div id="terminal-screen" class="p-5 sm:p-6 space-y-3 min-h-[260px] max-h-[380px] overflow-y-auto text-slate-300">
+                    <div class="text-cyber-muted text-xs leading-relaxed">
+                        EK4NS Cyber Shell v3.1.0-radar (x86_64-pc-linux-gnu)<br>
+                        Type <span class="text-cyber-violet font-bold">'help'</span> for command index or <span class="text-cyber-hyperCyan font-bold">'course'</span> to inspect study tracks.<br>
+                        ---------------------------------------------------------
+                    </div>
+                </div>
+
+                <!-- Command Input Line -->
+                <form id="terminal-form" onsubmit="handleTerminalSubmit(event)" class="px-4 sm:px-6 py-3.5 bg-black/60 border-t border-cyber-border flex items-center gap-2">
+                    <span class="text-cyber-violet font-bold select-none">ek4ns@root:~$</span>
+                    <input type="text" id="terminal-input" autocomplete="off" autofocus 
+                           placeholder="Type 'help'..." 
+                           class="flex-1 bg-transparent border-none text-slate-100 font-mono text-xs sm:text-sm focus:outline-none focus:ring-0 placeholder:text-slate-600">
+                    <button type="submit" class="text-xs font-mono text-white bg-cyber-violet hover:bg-violet-600 px-3 py-1.5 rounded-lg transition font-bold">
+                        RUN
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION 05: TRANSMISSION / CONTACT -->
+        <section id="contact" class="space-y-8 pb-12">
+            <div class="flex items-center gap-3">
+                <span class="font-mono text-cyber-violet font-bold text-lg">//05.</span>
+                <h2 class="text-2xl sm:text-3xl font-display font-bold text-white tracking-wide">SECURE DISPATCH</h2>
+                <div class="h-px bg-cyber-border flex-1 ml-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Info & Channels -->
+                <div class="p-6 sm:p-8 rounded-3xl cyber-glass border border-cyber-border space-y-6">
+                    <div>
+                        <h3 class="text-xl font-display font-bold text-white mb-2">Connect with Ek4ns</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Interested in collaborating on CTFs, security labs, discussing Linux internals, or offering mentorship/internship opportunities? Send a direct dispatch.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4 font-mono text-xs sm:text-sm">
+                        <!-- Direct Email Card -->
+                        <div class="p-4 rounded-xl bg-cyber-space border border-cyber-border flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="mail" class="w-5 h-5 text-cyber-hyperCyan"></i>
+                                <div>
+                                    <span class="block text-[10px] text-cyber-muted uppercase">DIRECT EMAIL</span>
+                                    <a href="mailto:ek4ns26@gmail.com" class="text-white hover:text-cyber-hyperCyan font-semibold">ek4ns26@gmail.com</a>
+                                </div>
+                            </div>
+                            <button onclick="copyEmailToClipboard()" class="p-2 rounded-lg bg-cyber-card text-cyber-muted hover:text-cyber-violet transition" title="Copy Email">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <!-- GitHub Profile Card -->
+                        <div class="p-4 rounded-xl bg-cyber-space border border-cyber-border flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                                </svg>
+                                <div>
+                                    <span class="block text-[10px] text-cyber-muted uppercase">GITHUB REPOSITORY</span>
+                                    <a href="https://github.com/erenyager-ai" target="_blank" rel="noopener noreferrer" class="text-white hover:text-cyber-violet font-semibold">erenyager-ai</a>
+                                </div>
+                            </div>
+                            <a href="https://github.com/erenyager-ai" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-cyber-card text-cyber-muted hover:text-white transition">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+
+                        <!-- TryHackMe Card -->
+                        <div class="p-4 rounded-xl bg-cyber-space border border-cyber-border flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="shield" class="w-5 h-5 text-red-500"></i>
+                                <div>
+                                    <span class="block text-[10px] text-cyber-muted uppercase">TRYHACKME ID</span>
+                                    <span class="text-white font-semibold">Ek4ns.26</span>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-md bg-cyber-card text-[11px] text-cyber-violet border border-cyber-border font-bold">VERIFIED</span>
+                        </div>
+
+                        <!-- Instagram Profile Card -->
+                        <div class="p-4 rounded-xl bg-cyber-space border border-cyber-border flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 fill-current text-pink-400" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                                <div>
+                                    <span class="block text-[10px] text-cyber-muted uppercase">INSTAGRAM HANDLE</span>
+                                    <a href="https://instagram.com/vxn_ek4ns__" target="_blank" rel="noopener noreferrer" class="text-white hover:text-pink-400 font-semibold">@vxn_ek4ns__</a>
+                                </div>
+                            </div>
+                            <a href="https://instagram.com/vxn_ek4ns__" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-cyber-card text-cyber-muted hover:text-pink-400 transition">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fast Mail Dispatch Form -->
+                <div class="p-6 sm:p-8 rounded-3xl cyber-glass border border-cyber-border">
+                    <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">CALLSIGN / NAME</label>
+                            <input type="text" id="contact-name" required placeholder="Security Recruiter / Fellow Researcher"
+                                   class="w-full px-4 py-2.5 rounded-xl bg-cyber-space border border-cyber-border text-slate-200 text-sm focus:outline-none focus:border-cyber-violet transition font-mono">
+                        </div>
+
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">EMAIL ADDRESS</label>
+                            <input type="email" id="contact-email" required placeholder="analyst@domain.com"
+                                   class="w-full px-4 py-2.5 rounded-xl bg-cyber-space border border-cyber-border text-slate-200 text-sm focus:outline-none focus:border-cyber-violet transition font-mono">
+                        </div>
+
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">TRANSMISSION MESSAGE</label>
+                            <textarea id="contact-msg" rows="4" required placeholder="Type your message, opportunity, or collaboration notes here..."
+                                      class="w-full px-4 py-2.5 rounded-xl bg-cyber-space border border-cyber-border text-slate-200 text-sm focus:outline-none focus:border-cyber-violet transition font-mono"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyber-violet to-cyber-hyperCyan text-white font-mono font-bold text-xs tracking-wider hover:shadow-[0_0_20px_rgba(139,92,246,0.6)] transition flex items-center justify-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            DISPATCH TO EK4NS26@GMAIL.COM
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-cyber-border bg-[#020409] py-8 text-xs font-mono text-cyber-muted relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 items-center gap-6 text-center md:text-left">
+            <!-- Left: Operator Status -->
+            <div class="flex items-center justify-center md:justify-start gap-2.5">
+                <span class="w-2 h-2 rounded-full bg-cyber-violet animate-pulse"></span>
+                <span>OPERATOR: <strong class="text-white">Ek4ns</strong> <span class="text-cyber-borderBright mx-1.5">//</span> Ghaziabad, India</span>
+            </div>
+
+            <!-- Center: Balanced Social Links with Equal Gap & Divider -->
+            <div class="flex items-center justify-center gap-8">
+                <a href="https://github.com/erenyager-ai" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-2 text-slate-400 hover:text-cyber-violet transition group">
+                    <svg class="w-4 h-4 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                    </svg>
+                    <span>github.com/erenyager-ai</span>
+                </a>
+
+                <span class="text-cyber-borderBright select-none">|</span>
+
+                <a href="https://instagram.com/vxn_ek4ns__" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-2 text-slate-400 hover:text-pink-400 transition group">
+                    <svg class="w-4 h-4 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                    <span>@vxn_ek4ns__</span>
+                </a>
+            </div>
+
+            <!-- Right: Security Level Telemetry -->
+            <div class="flex items-center justify-center md:justify-end gap-2 text-slate-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>SECURITY LEVEL: <span class="text-emerald-400 font-bold">ACTIVE RESEARCH</span></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LAB MODAL (Full Writeup Notes) -->
+    <div id="lab-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-cyber-card border border-cyber-violet max-w-2xl w-full rounded-3xl p-6 sm:p-8 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-cyber-border">
+                <h3 class="font-display font-bold text-lg text-cyber-violet">Lab Dossier: TryHackMe - Linux Agency</h3>
+                <button onclick="closeLabModal()" class="text-slate-400 hover:text-white p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 font-mono text-xs sm:text-sm text-slate-300">
+                <p><strong>Operator:</strong> Ek4ns (TryHackMe: Ek4ns.26)</p>
+                <p><strong>Environment:</strong> Linux / Bash / Debian-based VM</p>
+                
+                <h4 class="text-cyber-hyperCyan font-bold pt-2">Step 1: System Reconnaissance</h4>
+                <p class="text-slate-400">
+                    Checked current user identifier and group associations using <code class="text-cyber-violet">id</code> and <code class="text-cyber-violet">whoami</code>. Enumerated operating system release and kernel version with <code class="text-cyber-violet">uname -a</code>.
+                </p>
+
+                <h4 class="text-cyber-hyperCyan font-bold pt-2">Step 2: Hunting Misconfigured SUID Binaries</h4>
+                <p class="text-slate-400">
+                    Ran deep permission search for SUID executable binaries owned by root. Identified binary anomalies that could allow unauthorized privilege transition.
+                </p>
+
+                <h4 class="text-cyber-hyperCyan font-bold pt-2">Step 3: Root Escalation & Remediation</h4>
+                <p class="text-slate-400">
+                    Checked sudo capabilities via <code class="text-cyber-violet">sudo -l</code> and referenced GTFOBins for command bypasses. Following privilege attainment, documented remediation advice: remove SUID bits (<code class="text-cyber-violet">chmod u-s &lt;binary&gt;</code>) and enforce principle of least privilege.
+                </p>
+            </div>
+
+            <div class="pt-4 border-t border-cyber-border flex justify-end">
+                <button onclick="closeLabModal()" class="px-5 py-2.5 rounded-xl bg-cyber-space text-slate-200 hover:text-white font-mono text-xs font-semibold border border-cyber-border">
+                    CLOSE DOSSIER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Safe Lucide initialization
+        function initIcons() {
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+        }
+
+        // ==========================================
+        // UNQIUE CYBER RADAR & THREAT SCANNER CANVAS
+        // ==========================================
+        const canvas = document.getElementById('radar-canvas');
+        const ctx = canvas.getContext('2d');
+        let radarAngle = 0;
+        let pings = [];
+        let nodes = [];
+        let mouseX = -1000;
+        let mouseY = -1000;
+
+        function initRadarCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            nodes = [];
+            const nodeCount = Math.floor(window.innerWidth / 35);
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    radius: Math.random() * 2 + 1,
+                    type: Math.random() > 0.7 ? 'threat' : 'node',
+                    pulse: Math.random() * Math.PI
+                });
+            }
+        }
+
+        // Mouse Tracker for interactive nodes
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateRadar() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width * 0.85;
+            const centerY = canvas.height * 0.25;
+            const maxRadius = Math.min(canvas.width, canvas.height) * 0.45;
+
+            // 1. Draw Subtle Concentric Radar Rings in Top Right
+            ctx.strokeStyle = 'rgba(139, 92, 246, 0.08)';
+            ctx.lineWidth = 1;
+            for (let r = 80; r < maxRadius; r += 70) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Radar Axis Lines
+            ctx.beginPath();
+            ctx.moveTo(centerX - maxRadius, centerY);
+            ctx.lineTo(centerX + maxRadius, centerY);
+            ctx.moveTo(centerX, centerY - maxRadius);
+            ctx.lineTo(centerX, centerY + maxRadius);
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.05)';
+            ctx.stroke();
+
+            // 2. Draw Rotating Radar Sweep Gradient
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(radarAngle);
+            const sweepGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, maxRadius);
+            sweepGrad.addColorStop(0, 'rgba(139, 92, 246, 0.25)');
+            sweepGrad.addColorStop(0.5, 'rgba(6, 182, 212, 0.1)');
+            sweepGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
+            
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, maxRadius, 0, Math.PI / 4);
+            ctx.closePath();
+            ctx.fillStyle = sweepGrad;
+            ctx.fill();
+
+            // Leading Sweep Beam
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(maxRadius, 0);
+            ctx.strokeStyle = 'rgba(139, 92, 246, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.restore();
+
+            radarAngle += 0.012;
+
+            // 3. Update & Draw Dynamic Cyber Nodes
+            for (let i = 0; i < nodes.length; i++) {
+                const n = nodes[i];
+                n.x += n.vx;
+                n.y += n.vy;
+
+                if (n.x < 0) n.x = canvas.width;
+                if (n.x > canvas.width) n.x = 0;
+                if (n.y < 0) n.y = canvas.height;
+                if (n.y > canvas.height) n.y = 0;
+
+                // Distance to cursor
+                const dMouse = Math.hypot(n.x - mouseX, n.y - mouseY);
+
+                n.pulse += 0.03;
+                const dynamicSize = n.radius + Math.sin(n.pulse) * 0.8;
+
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, dynamicSize, 0, Math.PI * 2);
+
+                if (n.type === 'threat') {
+                    ctx.fillStyle = dMouse < 120 ? '#f59e0b' : 'rgba(245, 158, 11, 0.6)';
+                } else {
+                    ctx.fillStyle = dMouse < 120 ? '#06b6d4' : 'rgba(139, 92, 246, 0.5)';
+                }
+                ctx.fill();
+
+                // Connect nodes with tactical lines
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const n2 = nodes[j];
+                    const dist = Math.hypot(n.x - n2.x, n.y - n2.y);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(n.x, n.y);
+                        ctx.lineTo(n2.x, n2.y);
+                        const alpha = (1 - dist / 100) * 0.12;
+                        ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+                        ctx.lineWidth = 0.7;
+                        ctx.stroke();
+                    }
+                }
+
+                // Interactive connection line to mouse
+                if (dMouse < 130) {
+                    ctx.beginPath();
+                    ctx.moveTo(n.x, n.y);
+                    ctx.lineTo(mouseX, mouseY);
+                    const mouseAlpha = (1 - dMouse / 130) * 0.35;
+                    ctx.strokeStyle = `rgba(6, 182, 212, ${mouseAlpha})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+
+            requestAnimationFrame(animateRadar);
+        }
+
+        window.addEventListener('resize', () => {
+            initRadarCanvas();
+        });
+
+        // Modal Controls
+        function openLabModal() {
+            document.getElementById('lab-modal').classList.remove('hidden');
+            initIcons();
+        }
+        function closeLabModal() {
+            document.getElementById('lab-modal').classList.add('hidden');
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLabModal();
+        });
+
+        // Copy Email Helper
+        function copyEmailToClipboard() {
+            const email = 'ek4ns26@gmail.com';
+            const temp = document.createElement('textarea');
+            temp.value = email;
+            document.body.appendChild(temp);
+            temp.select();
+            try {
+                document.execCommand('copy');
+                alert('Copied to clipboard: ek4ns26@gmail.com');
+            } catch (err) {
+                console.log('Copy failed');
+            }
+            document.body.removeChild(temp);
+        }
+
+        // Contact Form Handler
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const msg = document.getElementById('contact-msg').value;
+
+            const mailtoUrl = `mailto:ek4ns26@gmail.com?subject=Transmission from ${encodeURIComponent(name)}&body=${encodeURIComponent(msg + "\n\nFrom: " + email)}`;
+            window.location.href = mailtoUrl;
+        }
+
+        // Interactive Terminal Simulator
+        const terminalScreen = document.getElementById('terminal-screen');
+        const terminalInput = document.getElementById('terminal-input');
+
+        const commands = {
+            help: `Available Commands:
+  • whoami      - View operator profile details
+  • course      - List full cyber security course modules
+  • labs        - Show TryHackMe labs completed
+  • git         - Output GitHub repository link
+  • insta       - View Instagram profile link
+  • thm         - Output TryHackMe profile
+  • contact     - Display official transmission email
+  • clear       - Clean terminal display`,
+            
+            whoami: `Operator: Ek4ns
+Identity: Aspiring Cyber Security Analyst
+Base: Ghaziabad, UP, India
+Education: 10th Standard Cleared
+Instagram: @vxn_ek4ns__
+Status: Active Trainee in Systems & Defense`,
+
+            course: `Current Full Course Modules:
+  [01] Networking & Packet Analysis (OSI, TCP/IP, Wireshark)
+  [02] Linux Architecture & Hardening (Permissions, SUID, sudo)
+  [03] Web Application Security (OWASP Top 10, Burp Suite, SQLi)
+  [04] Security Scripting & Languages (Python, C++, JS, Java)
+  [05] SOC Operations & Telemetry (SIEM, Event Logs)
+  [06] Cryptography & Identity Controls`,
+
+            labs: `Completed Labs:
+  ✓ TryHackMe: Linux Agency (SUID Enumeration, sudo -l Privilege Escalation)
+  ✓ Handle: Ek4ns.26`,
+
+            git: `GitHub: https://github.com/erenyager-ai`,
+            insta: `Instagram: https://instagram.com/vxn_ek4ns__ (@vxn_ek4ns__)`,
+            thm: `TryHackMe Profile: Ek4ns.26`,
+            contact: `Transmission Email: ek4ns26@gmail.com | Insta: @vxn_ek4ns__`,
+            clear: 'CLEAR_ACTION'
+        };
+
+        function handleTerminalSubmit(e) {
+            e.preventDefault();
+            const rawVal = terminalInput.value.trim();
+            if (!rawVal) return;
+
+            const cmd = rawVal.toLowerCase();
+
+            // Echo user command
+            const userLine = document.createElement('div');
+            userLine.className = 'flex items-center gap-2 text-cyber-violet';
+            userLine.innerHTML = `<span class="text-cyber-hyperCyan font-bold">ek4ns@root:~$</span> <span>${escapeHtml(rawVal)}</span>`;
+            terminalScreen.appendChild(userLine);
+
+            terminalInput.value = '';
+
+            // Handle response
+            if (cmd === 'clear') {
+                terminalScreen.innerHTML = '';
+            } else if (commands[cmd]) {
+                const resp = document.createElement('div');
+                resp.className = 'text-slate-300 whitespace-pre-wrap pl-4 border-l border-cyber-violet/40 my-1 font-mono';
+                resp.textContent = commands[cmd];
+                terminalScreen.appendChild(resp);
+            } else {
+                const err = document.createElement('div');
+                err.className = 'text-red-400 pl-4 border-l border-red-500/40 my-1 font-mono';
+                err.textContent = `zsh: command not found: ${rawVal}. Type 'help' for available commands.`;
+                terminalScreen.appendChild(err);
+            }
+
+            terminalScreen.scrollTop = terminalScreen.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // On Load initializers
+        window.onload = function() {
+            initIcons();
+            initRadarCanvas();
+            animateRadar();
+        };
+    </script>
+</body>
+</html>
